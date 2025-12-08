@@ -24,39 +24,48 @@ class ContactsBloc extends Bloc<ContactsEvent, ContactsState> {
     on<DeleteContactEvent>(_onDeleteContact);
     on<ToggleFavoriteEvent>(_onToggleFavorite);
     on<CallContactEvent>(_onCallContact);
+    on<ContactsUpdatedEvent>(_onContactsUpdated);
+
 
     add(LoadContactsEvent());
   }
 
-  void _onLoadContacts(
-      LoadContactsEvent event, Emitter<ContactsState> emit) {
+  void _onLoadContacts(LoadContactsEvent event, Emitter<ContactsState> emit){
     emit(ContactsLoadingState());
-
     _contactsSubscription?.cancel();
     _contactsSubscription =
         _contactsService.getContactsStream().listen((contacts) {
-          emit(ContactsLoadedState(contacts));
+          add(ContactsUpdatedEvent(contacts));
         });
   }
+  void _onContactsUpdated(
+      ContactsUpdatedEvent event, Emitter<ContactsState> emit) {
+    emit(ContactsLoadedState(event.contacts));
+  }
+
 
   Future<void> _onAddContact(
       AddContactEvent event, Emitter<ContactsState> emit) async {
     await _contactsService.addContact(event.contact);
+    add(LoadContactsEvent());
   }
 
   Future<void> _onUpdateContact(
       UpdateContactEvent event, Emitter<ContactsState> emit) async {
     await _contactsService.updateContact(event.contact);
+    add(LoadContactsEvent());
   }
 
   Future<void> _onDeleteContact(
       DeleteContactEvent event, Emitter<ContactsState> emit) async {
     await _contactsService.deleteContact(event.id);
+    add(LoadContactsEvent());
   }
 
   Future<void> _onToggleFavorite(
       ToggleFavoriteEvent event, Emitter<ContactsState> emit) async {
     await _contactsService.toggleFavorite(event.contact);
+    add(LoadContactsEvent());
   }
 
   Future<void> _onCallContact(

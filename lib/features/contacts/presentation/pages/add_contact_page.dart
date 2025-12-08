@@ -147,7 +147,7 @@ class _AddEditContactScreenState extends State<AddEditContactScreen> {
                   onPressed: () {
                     if (_formKey.currentState!.validate()) {
                       final contact = ContactModel(
-                        id: widget.contact!.id,
+                        id: widget.contact?.id ?? "",
                         name: _nameController.text,
                         phone: "$selectedCountryCode${_phoneController.text}",
                         isFavorite: isFavorite ? true : false,

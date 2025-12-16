@@ -17,7 +17,7 @@ class FavoritesScreen extends StatelessWidget {
       }
       if (state is ContactsLoadedState) {
         final favContacts = state.contacts
-            .where((c) => c.isFavorite == 1)
+            .where((c) => c.isFavorite == true)
             .toList();
 
         if (favContacts.isEmpty) {

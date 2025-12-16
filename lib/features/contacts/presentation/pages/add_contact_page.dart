@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:country_code_picker/country_code_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -19,16 +20,31 @@ class _AddEditContactScreenState extends State<AddEditContactScreen> {
   late TextEditingController _phoneController;
   String? selectedCountryCode ;
   bool isFavorite = false;
-
   @override
   void initState() {
     super.initState();
-    _nameController = TextEditingController(text: widget.contact?.name ?? '');
-    final phone = widget.contact?.phone ?? '';
-    _phoneController = TextEditingController(text: phone);
 
-    isFavorite = widget.contact?.isFavorite == 1;
+    _nameController = TextEditingController(text: widget.contact?.name ?? '');
+
+    if (widget.contact != null) {
+      final fullPhone = widget.contact!.phone;
+
+      // نفصل الكود عن باقي الرقم لو فيه "+"
+      if (fullPhone.startsWith("+")) {
+        selectedCountryCode = fullPhone.substring(0, 3); // مثال "+20"
+        _phoneController = TextEditingController(text: fullPhone.substring(3));
+      } else {
+        selectedCountryCode = "+20"; // default
+        _phoneController = TextEditingController(text: fullPhone);
+      }
+
+      isFavorite = widget.contact!.isFavorite;
+    } else {
+      selectedCountryCode = "+20"; // default للمستخدم الجديد
+      _phoneController = TextEditingController();
+    }
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -105,7 +121,6 @@ class _AddEditContactScreenState extends State<AddEditContactScreen> {
                         if (value == null || value.isEmpty) {
                           return "Phone is required";
                         }
-                        return null;
                       },
                     ),
                   ),

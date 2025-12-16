@@ -79,7 +79,7 @@ class ContactItem extends StatelessWidget {
               onSelected: (value) {
                 switch (value) {
                   case 'delete':
-                    context.read<ContactsBloc>().add(DeleteContactEvent(contact.id!));
+                    context.read<ContactsBloc>().add(DeleteContactEvent(contact.id));
                     break;
                   case 'edit':
                     Navigator.push(
